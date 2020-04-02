@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import CardList from "./components/cardList";
+import SearchBox from "./components/searchBox";
 
 class App extends React.Component {
   constructor() {
@@ -10,6 +11,12 @@ class App extends React.Component {
       searchField: ""
     };
   }
+
+  handleChange = e => {
+    this.setState({
+      searchField: e.target.value
+    });
+  };
 
   componentDidMount() {
     fetch("https://jsonplaceholder.typicode.com/users")
@@ -22,17 +29,19 @@ class App extends React.Component {
   }
 
   render() {
+    const { employees, searchField } = this.state;
+    const employeeFilter = employees.filter(employee =>
+      employee.name.toLowerCase().includes(searchField.toLowerCase())
+    );
     return (
-      <div>
-        <input
-          type="search"
-          placeholder="Search Employees"
-          onChange={e => {
-            this.setState({searchField: e.target.value}, () => console.log(this.state));
-            
-          }}
+      <div className="App">
+        <h1>Sample React project</h1>
+        <SearchBox
+          handleChange={this.handleChange}
+          placeHolder="Search Employees"
         />
-        <CardList employeesProp={this.state.employees} />
+
+        <CardList employeesProp={employeeFilter} />
       </div>
     );
   }
